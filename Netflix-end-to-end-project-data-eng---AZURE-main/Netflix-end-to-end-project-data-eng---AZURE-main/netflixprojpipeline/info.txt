@@ -1,0 +1,6 @@
+selected resource name:		netflixprojpipeline
+selected resource type:		pipeline
+factory name:			netflixprojadfvarsh
+factory location:		eastus
+subscription id:		115cbe7a-4097-4d30-ae82-6b5012680cd6
+time of download (UTC):		Sat, 31 May 2025 18:37:01 GMT

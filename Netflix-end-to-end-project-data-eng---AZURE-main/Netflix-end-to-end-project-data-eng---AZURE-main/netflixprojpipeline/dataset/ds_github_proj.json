@@ -1,0 +1,31 @@
+{
+    "name": "ds_github_proj",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "github_conproj",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "file_name": {
+                "type": "string"
+            }
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+            "location": {
+                "type": "HttpServerLocation",
+                "relativeUrl": {
+                    "value": "varshithgitub/Netflix-end-to-end-project-data-eng---AZURE/refs/heads/main/raw%20files/@{dataset().file_name}",
+                    "type": "Expression"
+                }
+            },
+            "columnDelimiter": ",",
+            "escapeChar": "\\",
+            "firstRowAsHeader": true,
+            "quoteChar": "\""
+        },
+        "schema": []
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}
