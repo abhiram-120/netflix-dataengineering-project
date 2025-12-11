@@ -16,7 +16,7 @@ Unlike standard pipelines that just move data, this project focuses on Data Qual
 **Why Medallion?**
 I chose Medallion over a traditional Monolithic warehouse because it allows for "Time Travel" debugging. If the Silver transformation fails, the Bronze data remains intact, allowing for data replay without re-ingesting from the source.
 
-<img src=s"scrreenshots/archiectecture.png">
+<img src="scrreenshots/archiectecture.png">
 
 ---
 
