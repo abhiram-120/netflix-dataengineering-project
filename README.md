@@ -11,7 +11,7 @@ The project adheres to the Medallion Architecture (Bronze, Silver, Gold layers),
 - Silver Layer (Cleaned & Conformed): Data is cleansed, validated, and structured, forming an enterprise view.
 - Gold Layer (Curated & Optimized): Final, highly curated data models tailored for direct consumption by BI tools and analytical applications.
 This architectural choice ensures step-by-step data processing, enhancing data quality and reliability throughout the pipeline.
-<img src="scrreenshots/archiectecture.png">
+<img src="Architecture Diagram.jpg">
 
 
 ## Detailed Data Flow & Processing Steps 
@@ -22,12 +22,12 @@ Once data resides in the Azure Data Lake, Databricks is leveraged for all subseq
    - Initial Validation & Storage: Performs necessary initial validations and then successfully lands the data into specific Azure Data Lake containers (e.g., raw).
    - Orchestration: Manages the overall pipeline flow, ensuring sequential execution of notebooks and DLT pipelines.
      
-<img src="scrreenshots/adf_pipeline.png">
+<img src="Screenshots/adf_pipeline.png">
 
 **2. Databricks Bronze Layer (Automated Ingestion):**
   - Databricks Autoloader: Seamlessly pushes incremental data from the raw container into the Bronze Layer. This provides an automated, scalable, and schema-evolving loading process for the netflix_titles dataset.
-Output: Data is stored as Delta tables in abfss://bronze@netflixprojectdl2.dfs.core.windows.net/netflix_titles.
-<img src="scrreenshots/autoloader.png"> 
+Output: Data is stored as Delta tables in abfss://bronze@netflixprojectdl.dfs.core.windows.net/netflix_titles.
+<img src="Screenshots/1_autoloader.png"> 
 
 **3. Databricks Silver Layer (Transformation & Refinement):**
   - Parameterized Notebooks: Utilized for processing various lookup tables (e.g., directors, cast, countries, categories). These notebooks use dynamic inputs (e.g., sourcefolder, targetfolder) via a job pipeline to efficiently process and write data into the Silver Layer.
@@ -35,21 +35,21 @@ Output: Data is stored as Delta tables in abfss://bronze@netflixprojectdl2.dfs.c
      - Eliminating null values.
      - Correcting data formats and content.
      - Refining the overall schema to a clean, conformed state.
-Output: Cleaned and transformed data is stored as Delta tables in abfss://silver@netflixprojectdl2.dfs.core.windows.net/netflix_titles and other lookup tables (e.g., silver/netflix_directors).
-<img src="scrreenshots/lookup_pipeline_for_silver.png"> <br>
+Output: Cleaned and transformed data is stored as Delta tables in abfss://silver@netflixprojectdl.dfs.core.windows.net/netflix_titles and other lookup tables (e.g., silver/netflix_directors).
+<img src="Screenshots/3_silver_lookup_pipeline.png"> <br>
 
 **4. Databricks Job Orchestration with Conditional Execution:**
   - Implemented advanced workflow control for Silver layer processing, leveraging dbutils.jobs.taskValues for inter-task communication.
   - A dedicated WeekdayLookup task dynamically determined the current day of the week, passing this value as a task output.
   - An If/Else condition task then evaluated this output, enabling conditional execution of downstream Silver layer notebooks. This allowed specific processing (e.g., silver Master Data transformations) to run only on designated days (e.g., Sundays), with an alternative path (FalseNotebook) executing on other days for controlled pipeline behavior.
-<img src="scrreenshots/weekdaylookup_pipeline.png"> <br> 
+<img src="Screenshots/5_silver_data%20pipeline_run.png"> <br> 
 
 **5. Databricks Gold Layer (Curated & Validated with DLT):**
   - Delta Live Tables (DLT) Pipeline: The heart of the Gold layer, automating the creation and management of reliable data pipelines.
   - Data Quality Constraints: A set of predefined rules (constraints) are applied (expect_all_or_drop and expect_or_drop) to purify the overall data. These rules ensure data integrity and consistency, dropping records that fail validation.
   - Final Data Models: Successfully processes the cleansed data, creating Delta Live Tables in the Gold layer (e.g., gold_netflixtitles, gold_netflixdirectors, etc.). These tables are now fully cleansed, validated, and optimized for consumption.
 Output: Consumption-ready Delta tables in the gold layer, ready for downstream applications.
-<img src="scrreenshots/delta_live_table_pipeline.png">
+<img src="Screenshots/7_DeltaLiveTable_Pipeline_run.png">
 
 **6. Reporting & Warehousing Integration:**
 - Data from the Gold layer was integrated with Power BI to construct a dynamic and insightful dashboard. 
@@ -72,7 +72,7 @@ This project effectively utilizes the following Azure services:
 -  Azure Data Lake – Scalable cloud storage
 -  Power BI – Interactive dashboards & insightful reporting
 
-##🗃️Dataset Used
+##Dataset Used
 This project utilizes a publicly available dataset sourced from Kaggle, detailing Netflix's extensive catalog of movies and TV shows.
 
 **Link:** [https://www.kaggle.com/datasets/shivamb/netflix-shows](https://www.kaggle.com/datasets/shivamb/netflix-shows)
