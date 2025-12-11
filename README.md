@@ -16,7 +16,7 @@ Unlike standard pipelines that just move data, this project focuses on Data Qual
 **Why Medallion?**
 I chose Medallion over a traditional Monolithic warehouse because it allows for "Time Travel" debugging. If the Silver transformation fails, the Bronze data remains intact, allowing for data replay without re-ingesting from the source.
 
-<img src="Architecture Diagram.jpg" width="800">
+<img src="screenshots/archiectecture.png" width="800">
 
 ---
 
@@ -28,7 +28,7 @@ Replaced traditional bulk loads (Copy Activity) with Databricks Auto Loader (`cl
 **Why Auto Loader?**
 Traditional `COPY INTO` commands require listing all files in the storage bucket, which becomes slow as the dataset grows to millions of files. Auto Loader uses event notifications (Event Grid) to process only new files, keeping ingestion costs flat regardless of data volume.
 
-<img src="Screenshots/1_autoloader.png" width="600">
+<img src="screenshots/autoloader.png" width="600">
 
 ### 2. Transformation Layer (PySpark & Silver)
 Created parameterized notebooks that accept `source_path` and `table_name` as widgets.
@@ -36,7 +36,7 @@ Created parameterized notebooks that accept `source_path` and `table_name` as wi
 **Why Parameterization?**
 Hardcoding table names creates tech debt. By parameterizing the logic, I reduced 10 separate notebooks (one for each table) into a single generic notebook, reducing code maintenance by 90%.
 
-<img src="Screenshots/3_silver_lookup_pipeline.png" width="600">
+<img src="screenshots/lookup_pipeline_for_silver.png" width="600">
 
 ### 3. Workflow Orchestration with Conditional Logic
 Configured Databricks Workflows with `dbutils.jobs.taskValues` to pass execution states between tasks.
@@ -44,7 +44,7 @@ Configured Databricks Workflows with `dbutils.jobs.taskValues` to pass execution
 **Why Conditional Execution?**
 Full pipeline runs are expensive. By adding conditional checks (e.g., checking if source data arrived), I prevent the heavy Spark clusters from spinning up unnecessarily, optimizing compute costs.
 
-<img src="Screenshots/5_silver_data%20pipeline_run.png" width="600">
+<img src="screenshots/silvernotebook.png" width="600">
 
 ### 4. Quality Assurance (Delta Live Tables - DLT)
 Deployed DLT Pipelines for the Gold Layer with `expect_or_drop` constraints.
@@ -52,7 +52,7 @@ Deployed DLT Pipelines for the Gold Layer with `expect_or_drop` constraints.
 **Why DLT?**
 In standard Spark, writing data quality checks requires complex boilerplate code. DLT treats Data Quality as a configuration. It automatically quarantines bad data, ensuring the BI dashboard never breaks due to a schema mismatch or null primary key.
 
-<img src="Screenshots/7_DeltaLiveTable_Pipeline_run.png" width="600">
+<img src="screenshots/delta_live_table_pipeline.png" width="600">
 
 ---
 
