@@ -64,13 +64,70 @@ Integrated the workspace with Unity Catalog to replace the legacy Hive Metastore
 The biggest bottleneck in AI/Analytics is security. Unity Catalog decouples permissions from the physical storage path. This means I can grant access to a specific *table* without giving a user read access to the entire *storage container*.
 
 ---
-
 ## Tech Stack
-*   **Cloud:** Microsoft Azure (ADLS Gen2, ADF)
-*   **Compute:** Azure Databricks (Spark 3.4)
-*   **Language:** Python (PySpark), SQL
-*   **Format:** Delta Lake
-*   **DevOps:** Git Integration
+- Azure Data Factory – orchestration & ingestion
+- Azure Data Lake Gen2 – storage (Bronze/Silver/Gold)
+- Databricks – PySpark transformations
+- Delta Lake – ACID-compliant storage
+- Delta Live Tables – data quality & constraints
+- Unity Catalog – governance & schema management
 
-## Dataset
-**Source:** [Kaggle - Netflix Movies and TV Shows](https://www.kaggle.com/datasets/shivamb/netflix-shows)
+---
+
+## Pipeline Breakdown
+
+### Bronze Layer (Raw Ingestion)
+- Raw Netflix data ingested from GitHub
+- Stored in Delta format without transformations
+- Schema inference handled by Autoloader
+
+**Why?**
+Keeping raw data immutable helps with reprocessing and debugging.
+
+---
+
+### Silver Layer (Cleaning & Validation)
+- Handled null values and invalid records
+- Standardized column formats
+- Applied business-level transformations using PySpark
+- Parameterized notebooks triggered by ADF
+
+**Why?**
+Separating cleaning logic avoids polluting raw data and improves maintainability.
+
+---
+
+### Gold Layer (Analytics-Ready)
+- Implemented **Delta Live Tables**
+- Added declarative constraints for data quality
+- Optimized tables for BI queries
+
+**Why DLT?**
+DLT simplifies dependency management and enforces data correctness automatically.
+
+---
+
+## Data Quality & Monitoring
+- Constraints defined in DLT
+- Pipeline orchestration using ADF
+- Failure visibility via Databricks job monitoring
+
+---
+
+## Learnings & Trade-offs
+- Learned how schema evolution impacts downstream tables
+- Understood why incremental processing is critical for cost control
+- Realized the importance of separating orchestration (ADF) and computation (Databricks)
+
+---
+
+## Possible Improvements
+- Add data freshness & volume checks
+- Introduce Airflow for cross-cloud orchestration
+- Add automated tests for transformation logic
+
+---
+
+## Conclusion
+This project helped me understand how production-style data pipelines are designed, not just implemented.  
+It reinforced the importance of **data quality, observability, and scalable design** — especially in data-driven companies.
